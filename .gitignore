@@ -1,3 +1,6 @@
+# This .gitignore file was customized by neharana2304
+
+
 .env
 __pycache__/
 .venv/
