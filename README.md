@@ -69,3 +69,78 @@ This repository contains a Google Agent Development Kit (ADK) implementation of 
 2. **Initialize the Google Cloud CLI**
    ```bash
    gcloud init
+
+   Set up Application Default Credentials
+
+bash
+gcloud auth application-default login
+This will open a browser window for authentication and store credentials in
+~/.config/gcloud/application_default_credentials.json
+
+Verify Authentication
+
+bash
+gcloud auth list
+gcloud config list
+Enable Required APIs
+
+bash
+gcloud services enable aiplatform.googleapis.com
+Installation
+Set up a virtual environment
+
+bash
+python -m venv .venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+Install Dependencies
+
+bash
+pip install -r requirements.txt
+Using the Agent
+The agent provides the following functions:
+
+1. Query Documents
+Ask questions and get answers from your document corpus.
+Automatically retrieves relevant information from the specified corpus.
+Generates informative responses based on the retrieved content.
+2. List Corpora
+Shows all available document corpora in your project.
+Displays corpus names and basic information.
+3. Create Corpus
+Create a new empty document corpus with a custom name.
+Sets up the corpus with recommended embedding model configuration.
+4. Add New Data
+Add documents to existing corpora or create new ones.
+Supports Google Drive URLs and GCS (Google Cloud Storage) paths.
+Automatically creates new corpora if they don't exist.
+5. Get Corpus Information
+Provides detailed information about a specific corpus.
+Shows document count, file metadata, and creation time.
+6. Delete Corpus
+Removes corpora that are no longer needed.
+Requires confirmation to prevent accidental deletion.
+Troubleshooting
+Authentication Problems
+
+Run gcloud auth application-default login again.
+Check if your service account has the necessary permissions.
+API Errors
+
+Ensure the Vertex AI API is enabled:
+gcloud services enable aiplatform.googleapis.com
+Verify your project has billing enabled.
+Quota Issues
+
+Check your Google Cloud Console for any quota limitations.
+Request quota increases if needed.
+Missing Dependencies
+
+Ensure all requirements are installed:
+pip install -r requirements.txt
+Additional Resources
+Vertex AI RAG Documentation
+Google Agent Development Kit (ADK) Documentation
+Google Cloud Authentication Guide
+
+
+
