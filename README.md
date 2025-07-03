@@ -1,4 +1,4 @@
-# Vertex AI RAG Agent with ADK
+# Vertex AI RAG Agent with google ADK
 
 This repository contains a Google Agent Development Kit (ADK) implementation of a Retrieval Augmented Generation (RAG) agent using Google Cloud Vertex AI.
 
