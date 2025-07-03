@@ -38,6 +38,7 @@ def create_corpus(
 
     try:
         # Clean corpus name for use as display name
+        print("I'm here in the create_corpus function")
         display_name = re.sub(r"[^a-zA-Z0-9_-]", "_", corpus_name)
 
         # Configure embedding model
@@ -45,7 +46,9 @@ def create_corpus(
             vertex_prediction_endpoint=rag.VertexPredictionEndpoint(
                 publisher_model=DEFAULT_EMBEDDING_MODEL
             )
+
         )
+        print("Using default embedding model:", DEFAULT_EMBEDDING_MODEL)
 
         # Create the corpus
         rag_corpus = rag.create_corpus(
@@ -54,6 +57,7 @@ def create_corpus(
                 rag_embedding_model_config=embedding_model_config
             ),
         )
+        print("Corpus created successfully:", rag_corpus.name)
 
         # Update state to track corpus existence
         tool_context.state[f"corpus_exists_{corpus_name}"] = True

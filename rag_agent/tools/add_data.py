@@ -7,6 +7,8 @@ from typing import List
 
 from google.adk.tools.tool_context import ToolContext
 from vertexai import rag
+from .analyze_logs import analyze_logs
+from .get_log_content_by_filename import get_log_content_by_filename
 
 from ..config import (
     DEFAULT_CHUNK_OVERLAP,
@@ -38,6 +40,7 @@ def add_data(
         dict: Information about the added data and status
     """
     # Check if the corpus exists
+    print("Checking if corpus exists:", corpus_name)
     if not check_corpus_exists(corpus_name, tool_context):
         return {
             "status": "error",
@@ -47,6 +50,7 @@ def add_data(
         }
 
     # Validate inputs
+    print("Validating paths:", paths)
     if not paths or not all(isinstance(path, str) for path in paths):
         return {
             "status": "error",
@@ -66,6 +70,7 @@ def add_data(
             continue
 
         # Check for Google Docs/Sheets/Slides URLs and convert them to Drive format
+        print("Checking for the format of path as on below regex:", path)
         docs_match = re.match(
             r"https:\/\/docs\.google\.com\/(?:document|spreadsheets|presentation)\/d\/([a-zA-Z0-9_-]+)(?:\/|$)",
             path,
@@ -132,20 +137,38 @@ def add_data(
         if not tool_context.state.get("current_corpus"):
             tool_context.state["current_corpus"] = corpus_name
 
-        # Build the success message
-        conversion_msg = ""
-        if conversions:
-            conversion_msg = " (Converted Google Docs URLs to Drive format)"
+            # Build the success message
+            conversion_msg = ""
+            if conversions:
+                conversion_msg = " (Converted Google Docs URLs to Drive format)"
 
-        return {
-            "status": "success",
-            "message": f"Successfully added {import_result.imported_rag_files_count} file(s) to corpus '{corpus_name}'{conversion_msg}",
-            "corpus_name": corpus_name,
-            "files_added": import_result.imported_rag_files_count,
-            "paths": validated_paths,
-            "invalid_paths": invalid_paths,
-            "conversions": conversions,
-        }
+
+
+            result = {
+                "status": "success",
+                "message": f"Successfully added {import_result.imported_rag_files_count} file(s) to corpus '{corpus_name}'{conversion_msg}",
+                "corpus_name": corpus_name,
+                "files_added": import_result.imported_rag_files_count,
+                "paths": validated_paths,
+                "invalid_paths": invalid_paths,
+                "conversions": conversions,
+            }
+
+            # Analyze logs if any .log file was added
+            log_files = [p for p in validated_paths if p.endswith('.log')]
+            log_analysis = []
+            for log_file in log_files:
+                log_content = get_log_content_by_filename(log_file, corpus_name, tool_context)
+                analysis = analyze_logs(
+                    corpus_name=corpus_name,
+                    tool_context=tool_context,
+                    log_content=log_content
+                )
+                log_analysis.append({"file": log_file, "analysis": analysis})
+            if log_analysis:
+                result["log_analysis"] = log_analysis
+
+            return result
 
     except Exception as e:
         return {

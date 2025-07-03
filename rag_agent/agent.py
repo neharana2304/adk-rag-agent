@@ -1,5 +1,6 @@
 from google.adk.agents import Agent
 
+# from .tools import get_corpur_file_content
 from .tools.add_data import add_data
 from .tools.create_corpus import create_corpus
 from .tools.delete_corpus import delete_corpus
@@ -7,6 +8,8 @@ from .tools.delete_document import delete_document
 from .tools.get_corpus_info import get_corpus_info
 from .tools.list_corpora import list_corpora
 from .tools.rag_query import rag_query
+from .tools.analyze_logs import analyze_logs
+from rag_agent.tools.get_log_content_by_filename import get_log_content_by_filename
 
 root_agent = Agent(
     name="RagAgent",
@@ -20,7 +23,10 @@ root_agent = Agent(
         add_data,
         get_corpus_info,
         delete_corpus,
+        analyze_logs,
+        get_log_content_by_filename,
         delete_document,
+        # get_corpur_file_content
     ],
     instruction="""
     # 🧠 Vertex AI RAG Agent
@@ -39,7 +45,9 @@ root_agent = Agent(
     5. **Get Corpus Info**: You can provide detailed information about a specific corpus, including file metadata and statistics.
     6. **Delete Document**: You can delete a specific document from a corpus when it's no longer needed.
     7. **Delete Corpus**: You can delete an entire corpus and all its associated files when it's no longer needed.
-    
+    8. **Analyze Logs**: You can analyze logs for the RAG agent to identify issues or performance bottlenecks and present the results graphically (e.g., error trends, distributions, and heatmaps).
+    9. **Get Log Content from filename**: You can fetch the content of a specific log file from a corpus, which can be useful for debugging or analysis purposes.
+    10. **Get Corpus File Content**: You can download all file contents from a specified corpus and save them as a JSON file for further analysis or archiving.
     ## How to Approach User Requests
     
     When a user asks a question:
@@ -87,6 +95,28 @@ root_agent = Agent(
        - Parameters:
          - corpus_name: The name of the corpus to delete
          - confirm: Boolean flag that must be set to True to confirm deletion
+         
+    8. `analyze_logs`: Analyze logs for the RAG agent
+       - Parameters:
+         - corpus_name: The name of the corpus (optional, for context)
+         - tool_context: Additional context for the tool
+       - When this tool is called, it reads the agent's log file, analyzes errors and performance, and generates graphical summaries (such as error trend plots and heatmaps). The results are returned as image file paths and summary statistics.
+       
+      9. `get_log_content_by_filename`: Fetch the content of a log file from a corpus by file name
+   - Parameters:
+     - filename: The name of the file to fetch (e.g., `test.log`)
+     - corpus_name: The name of the corpus containing the file
+     - tool_context: Additional context for the tool
+   - Returns the raw content of the specified log file for further processing
+    
+    10. `get_corpur_file_content`: Download all file contents from a specified corpus and save them as a JSON file
+         - Parameters:
+            - corpus_name: The name of the corpus to fetch files from
+            - tool_context: Additional context for the tool
+            - output_json_path: Path to the output JSON file where logs will be saved
+            - Returns a JSON file containing all file contents from the corpus
+            
+   
     
     ## INTERNAL: Technical Implementation Details
     
