@@ -1,3 +1,44 @@
+Agentic RAG Framework for  Log Analytics
+
+Overview
+This project demonstrates a Retrieval-Augmented Generation (RAG) framework built with Google ADK and Vertex AI embeddings to enable natural language querying and analysis of cybersecurity logs — without the need for traditional SIEM solutions.
+
+Designed with Cybersecurity teams in mind, especially those focused on CIAM/IAM workflows, this framework allows ingesting structured log files (e.g., JSON logs from authentication systems, audit trails) stored in Google Drive, automatically creating multiple knowledge bases (corpora) that can be queried via intelligent agents.
+
+Key Features
+Dynamic Corpus Creation: Ingest log files from Google Drive into multiple independent corpora representing different data sets (e.g., Okta logs, privileged access events).
+
+Agent-Orchestrated Queries: Use Google ADK agents to coordinate document retrieval and prompt execution, enabling natural language queries over the data.
+
+Vertex AI Embeddings: Leverages Vertex AI’s embedding models for efficient vector similarity search across large-scale logs.
+
+No SIEM Required: Lightweight alternative for log analytics, root cause analysis, and threat hunting without heavy SIEM infrastructure.
+
+CIAM/IAM Focus: Tailored for analyzing authentication events, access logs, policy changes, and detecting suspicious patterns.
+
+Architecture
+Data Ingestion: JSON log files uploaded to Google Drive.
+
+Embedding: Documents processed with Vertex AI embedding API to create vector representations.
+
+Corpus Management: Each corpus is an isolated knowledge base, indexed for similarity search.
+
+Agent Layer: Google ADK agents handle retrieval augmented generation workflows, processing user queries, retrieving relevant documents, and generating answers.
+
+Query Interface: Users interact via natural language, receiving insights from complex log data without manual parsing.
+
+Use Cases
+-Analyzing failed MFA attempts and authentication anomalies.
+
+-Detecting privilege escalation or unusual access patterns.
+
+-Conducting access review audits based on historical logs.
+
+-Investigating policy misconfigurations through natural language queries.
+
+-Accelerating threat detection workflows with lightweight AI-powered analytics.
+
+
 # Vertex AI RAG Agent with google ADK
 
 This repository contains a Google Agent Development Kit (ADK) implementation of a Retrieval Augmented Generation (RAG) agent using Google Cloud Vertex AI.
