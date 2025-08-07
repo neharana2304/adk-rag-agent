@@ -38,6 +38,8 @@ def main():
         def __init__(self):
             self.session = MockSession()
 
+    invocation_context = MockInvocationContext()
+    tool_context = ToolContext(invocation_context)
     # Query the corpus
     result = root_agent.tools[0](corpus_name=corpus_name, query=query, tool_context=tool_context)
 
