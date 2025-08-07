@@ -5,3 +5,4 @@ gitpython==3.1.40
 google-adk==0.5.0
 auth0-python
 pandas
+matplotlib
