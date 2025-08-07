@@ -30,10 +30,13 @@ def main():
     query = "Show me all ERROR logs from last week"
 
     # Create a mock invocation_context to satisfy ToolContext
-    mock_session = Mock()
-    mock_session.state = {}
-    invocation_context = {"session": mock_session}
-    tool_context = ToolContext(invocation_context)
+    class MockSession:
+        def __init__(self):
+            self.state = {}
+
+    class MockInvocationContext:
+        def __init__(self):
+            self.session = MockSession()
 
     # Query the corpus
     result = root_agent.tools[0](corpus_name=corpus_name, query=query, tool_context=tool_context)
