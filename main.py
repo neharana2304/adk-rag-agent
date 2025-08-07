@@ -1,15 +1,38 @@
-
 import os
+import sys
+from unittest.mock import Mock
+
 from google.adk.tools.tool_context import ToolContext
 from rag_agent.agent import root_agent
 from rag_agent.tools.get_corpus_info import get_corpus_info
 from rag_agent.tools.get_log_content_by_filename import get_log_content_by_filename
 from rag_agent.tools.analyze_logs import analyze_logs
 
+# --- Environment Variable Check ---
+required_env_vars = [
+    "GOOGLE_CLOUD_PROJECT",
+    "GOOGLE_CLOUD_LOCATION",
+    "AUTH0_DOMAIN",
+    "AUTH0_API_AUDIENCE",
+    "AUTH0_CLIENT_ID",
+    "AUTH0_CLIENT_SECRET",
+]
+if any(not os.environ.get(var) for var in required_env_vars):
+    print("Error: Missing required environment variables.")
+    print("Please set the following variables:")
+    for var in required_env_vars:
+        if not os.environ.get(var):
+            print(f"- {var}")
+    sys.exit(1)
+
 def main():
     corpus_name = "example_corpus"
     query = "Show me all ERROR logs from last week"
-    invocation_context = {}
+
+    # Create a mock invocation_context to satisfy ToolContext
+    mock_session = Mock()
+    mock_session.state = {}
+    invocation_context = {"session": mock_session}
     tool_context = ToolContext(invocation_context)
 
     # Query the corpus
