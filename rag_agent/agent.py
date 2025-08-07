@@ -1,7 +1,7 @@
 from google.adk.agents import Agent
 
 from rag_agent.auth_middleware import create_permission_wrapped_tool
-# from .tools import get_corpur_file_content
+from rag_agent.app_context import app_context
 from .tools.add_data import add_data
 from .tools.create_corpus import create_corpus
 from .tools.delete_corpus import delete_corpus
@@ -166,4 +166,7 @@ wrapped_tools = [
 ]
 
 root_agent.tools = wrapped_tools
+
+app_context.root_agent = root_agent
+
 
