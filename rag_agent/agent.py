@@ -1,6 +1,7 @@
 from google.adk.agents import Agent
 
-# from .tools import get_corpur_file_content
+from rag_agent.auth_middleware import create_permission_wrapped_tool
+from rag_agent.app_context import app_context
 from .tools.add_data import add_data
 from .tools.create_corpus import create_corpus
 from .tools.delete_corpus import delete_corpus
@@ -11,23 +12,24 @@ from .tools.rag_query import rag_query
 from .tools.analyze_logs import analyze_logs
 from rag_agent.tools.get_log_content_by_filename import get_log_content_by_filename
 
+
+TOOL_PERMISSIONS_MAP = {
+    rag_query: ["rag:read"],
+    list_corpora: ["rag:read"],
+    create_corpus: ["rag:write"],
+    add_data: ["rag:write"],
+    get_corpus_info: ["rag:read"],
+    delete_corpus: ["rag:write"],
+    analyze_logs: ["rag:read"],
+    get_log_content_by_filename: ["rag:read"],
+    delete_document: ["rag:write"],
+}
+
 root_agent = Agent(
     name="RagAgent",
     # Using Gemini 2.5 Flash for best performance with RAG operations
     model="gemini-2.5-flash-preview-04-17",
     description="Vertex AI RAG Agent",
-    tools=[
-        rag_query,
-        list_corpora,
-        create_corpus,
-        add_data,
-        get_corpus_info,
-        delete_corpus,
-        analyze_logs,
-        get_log_content_by_filename,
-        delete_document,
-        # get_corpur_file_content
-    ],
     instruction="""
     # 🧠 Vertex AI RAG Agent
 
@@ -143,3 +145,28 @@ root_agent = Agent(
     Remember, your primary goal is to help users access and manage information through RAG capabilities.
     """,
 )
+
+original_tools = [
+    rag_query,
+    list_corpora,
+    create_corpus,
+    add_data,
+    get_corpus_info,
+    delete_corpus,
+    analyze_logs,
+    get_log_content_by_filename,
+    delete_document,
+]
+
+wrapped_tools = [
+    create_permission_wrapped_tool(tool, TOOL_PERMISSIONS_MAP[tool], root_agent.name)
+    if tool in TOOL_PERMISSIONS_MAP
+    else tool
+    for tool in original_tools
+]
+
+root_agent.tools = wrapped_tools
+
+app_context.root_agent = root_agent
+
+

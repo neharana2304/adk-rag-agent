@@ -1,13 +1,11 @@
 """
 Tool for adding new data sources to a Vertex AI RAG corpus.
 """
-
 import re
 from typing import List
-
+from rag_agent.app_context import app_context
 from google.adk.tools.tool_context import ToolContext
 from vertexai import rag
-from .analyze_logs import analyze_logs
 from .get_log_content_by_filename import get_log_content_by_filename
 
 from ..config import (
@@ -159,15 +157,15 @@ def add_data(
             log_analysis = []
             for log_file in log_files:
                 log_content = get_log_content_by_filename(log_file, corpus_name, tool_context)
-                analysis = analyze_logs(
+                analyze_logs_tool = next((tool for tool in app_context.root_agent.tools if getattr(tool, '__name__', None) == 'analyze_logs'), None)
+                analysis = analyze_logs_tool(
                     corpus_name=corpus_name,
                     tool_context=tool_context,
                     log_content=log_content
-                )
+                ) if analyze_logs_tool else {"status": "error", "message": "analyze_logs tool not found"}
                 log_analysis.append({"file": log_file, "analysis": analysis})
             if log_analysis:
                 result["log_analysis"] = log_analysis
-
             return result
 
     except Exception as e:
@@ -177,3 +175,5 @@ def add_data(
             "corpus_name": corpus_name,
             "paths": paths,
         }
+
+
